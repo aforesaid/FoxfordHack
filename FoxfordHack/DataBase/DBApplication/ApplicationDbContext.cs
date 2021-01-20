@@ -1,6 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
-using FoxfordHack.Models.Course;
+﻿using FoxfordHack.Models.Course;
 using FoxfordHack.Services.DataBase;
+using Microsoft.EntityFrameworkCore;
 namespace FoxfordHack.DataBase.DBApplication
 {
     public class ApplicationDbContext : DbContext
