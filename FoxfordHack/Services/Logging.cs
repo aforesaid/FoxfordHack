@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.IO;
 
 namespace FoxfordHack.Services
@@ -9,7 +7,7 @@ namespace FoxfordHack.Services
     {
         private static readonly string tokenPath = Path.Combine(Directory.GetCurrentDirectory(), "logs.log");
         public void FixTheError (Exception ex)
-            => File.AppendAllText(tokenPath,ex.ToString());
+            => File.AppendAllText(tokenPath, $"{DateTime.Now} {ex}");
         
     }
 }
