@@ -11,6 +11,12 @@ namespace FoxfordHack.Services.WebApi.Query
     class FoxfordLessonsWebService : BaseQuery
     {
         private static readonly string DefaultURLForLessons = @"https://foxford.ru/api/courses";
+        public CourseWebService(string cookie, int countThreads = 10, int delay = 500)
+        {
+            Cookie = cookie;
+            CountThreads = countThreads;
+            Delay = delay;
+        }
         public async Task<List<Lesson>> GetAllLessonsInCourse(int courseId)
         {
             var result = new List<Lesson>();
