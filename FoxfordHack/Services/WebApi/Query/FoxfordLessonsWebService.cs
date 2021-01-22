@@ -11,7 +11,7 @@ namespace FoxfordHack.Services.WebApi.Query
     class FoxfordLessonsWebService : BaseQuery
     {
         private static readonly string DefaultURLForLessons = @"https://foxford.ru/api/courses";
-        public CourseWebService(string cookie, int countThreads = 10, int delay = 500)
+        public FoxfordLessonsWebService(string cookie, int countThreads = 10, int delay = 500)
         {
             Cookie = cookie;
             CountThreads = countThreads;
@@ -34,21 +34,20 @@ namespace FoxfordHack.Services.WebApi.Query
                 result.AddRange(_model.Lessons);
                 model.Cursor.Before = _model.Cursor.Before;
             }
-            return null;
+            await Task.Delay(Delay);
+            return result;
         }
         public async Task<ViewLesson> GetViewLesson(int courseId,int cursor = 0)
         {
-            using (var client = new HttpClient())
-            {
-                client.DefaultRequestHeaders.Add("Cookie", Cookie);
-                client.DefaultRequestHeaders.Add("User-Agent", DefaultUserAgent);
-                var queryByUrl = cursor == 0 ? "" : $"?lesson_id={cursor}";
-                var urlQuery = $"{DefaultURLForLessons}/{courseId}/lessons{queryByUrl}";
-                var request = await client.GetAsync(urlQuery);
-                var jsonString = await request.Content.ReadAsStringAsync();
-                var model = JsonSerializer.Deserialize<ViewLesson>(jsonString);
-                return model;
-            }
+            using var client = new HttpClient();
+            client.DefaultRequestHeaders.Add("Cookie", Cookie);
+            client.DefaultRequestHeaders.Add("User-Agent", DefaultUserAgent);
+            var queryByUrl = cursor == 0 ? "" : $"?lesson_id={cursor}";
+            var urlQuery = $"{DefaultURLForLessons}/{courseId}/lessons{queryByUrl}";
+            var request = await client.GetAsync(urlQuery);
+            var jsonString = await request.Content.ReadAsStringAsync();
+            var model = JsonSerializer.Deserialize<ViewLesson>(jsonString);
+            return model;
         }
     }
 }

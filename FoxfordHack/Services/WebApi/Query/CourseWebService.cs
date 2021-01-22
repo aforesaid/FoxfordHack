@@ -10,6 +10,7 @@ namespace FoxfordHack.Services.WebApi.Query
     class CourseWebService : BaseQuery
     {
         private static readonly string DefaultURLForActiveCourses = @"https://foxford.ru/api/user/bookmarks";
+        private int countActivate { get; set; }
         public CourseWebService(string cookie, int countThreads = 10, int delay = 500)
         {
             Cookie = cookie;
@@ -39,8 +40,9 @@ namespace FoxfordHack.Services.WebApi.Query
                     var urlContent = $"{DefaultURLForActiveCourses}?page={index}&archived=false";
                     var request = await client.GetAsync(urlContent);
                     var jsonString = await request.Content.ReadAsStringAsync();
-                    var list = JsonSerializer.Deserialize<List<Course>>(jsonString);
-                    result.AddRange(list);
+                    var list = JsonSerializer.Deserialize<ViewCourses>(jsonString);
+                    if (list.AciveCourses.Count == 0) flag = false;
+                    result.AddRange(list.AciveCourses);
                     result = result.Distinct().ToList();
                     index++;
                 }
@@ -49,22 +51,22 @@ namespace FoxfordHack.Services.WebApi.Query
         }
         private async Task SendRequestForActiveCourse(int position,string promo, int minCourseId = 1, int maxCourseId = 10000)
         {
-            using (var client = new HttpClient())
+            using var client = new HttpClient();
+            client.DefaultRequestHeaders.Add("Cookie", Cookie);
+            client.DefaultRequestHeaders.Add("User-Agent", DefaultUserAgent);
+            for (int i = minCourseId + position; i < maxCourseId; i += CountThreads)
             {
-                client.DefaultRequestHeaders.Add("Cookie", Cookie);
-                client.DefaultRequestHeaders.Add("User-Agent", DefaultUserAgent);
-                for (int i = minCourseId + position; i < maxCourseId; i+= CountThreads)
+                var urlContent = $"{DefaultURL}/courses/{i}/activate/{promo}";
+                try
                 {
-                    var urlContent = $"{DefaultURL}/{i}/activate/{promo}";
-                    try
-                    {
-                        var result = await client.GetAsync(urlContent);
-                        await Task.Delay(Delay);
-                    }
-                    catch(Exception ex)
-                    {
-                        new Logging().FixTheError(ex);
-                    }
+                    var result = await client.GetAsync(urlContent);
+                    countActivate++;
+                    Console.WriteLine($"Обработано {countActivate}");
+                    await Task.Delay(Delay);
+                }
+                catch (Exception ex)
+                {
+                    new Logging().FixTheError(ex);
                 }
             }
         }
