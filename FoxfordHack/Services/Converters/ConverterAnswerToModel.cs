@@ -2,7 +2,11 @@
 using System.Collections.Generic;
 using System.Text.Json;
 using FoxfordHack.Models.ModelParsingToJson.Answers;
-namespace FoxfordHack.Services.ConvertersJsonToModel
+using FoxfordHack.Models.ModelParsingToJson.Answers.CheckboxType;
+using FoxfordHack.Models.ModelParsingToJson.Answers.Radio;
+using FoxfordHack.Models.ModelParsingToJson.Answers.TextGap;
+
+namespace FoxfordHack.Services.Converters
 {
     class ConverterAnswerToModel<T>
     {
@@ -20,11 +24,5 @@ namespace FoxfordHack.Services.ConvertersJsonToModel
                 return null;
             }
         }
-        public Type GetTypeByEnum(ANSWER_TYPES type)
-            => type switch
-            {
-
-                _ => throw new ArgumentException("Bad type")
-            };
     }
 }
