@@ -12,7 +12,5 @@ namespace FoxfordHack.Models.ModelParsingToJson.Answers.TextGap
         public int Id { get; set; }
         [JsonPropertyName("identifier")]
         public string Identifier { get; set; }
-        [JsonPropertyName("correct")]
-        public bool IsCorrect { get; set; }
     }
 }
