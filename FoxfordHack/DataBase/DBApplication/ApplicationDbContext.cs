@@ -1,4 +1,4 @@
-﻿using FoxfordHack.Models.Course;
+﻿using FoxfordHack.Models.DataBaseModels;
 using FoxfordHack.Services.DataBase;
 using Microsoft.EntityFrameworkCore;
 namespace FoxfordHack.DataBase.DBApplication

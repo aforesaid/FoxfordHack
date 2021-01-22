@@ -1,14 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace FoxfordHack.Models.Course
+namespace FoxfordHack.Models.DataBaseModels
 {
     public class TaskFoxford
     {
         public int Id { get; set; }
-        [ForeignKey("CourseKey")]
-        public int CourseId { get; set; }
         public int TaskFoxfordId { get; set; }
         public string Answer { get; set; }
+        [ForeignKey("LessonKey")]
         public int LessonId { get; set; }
     }
 }

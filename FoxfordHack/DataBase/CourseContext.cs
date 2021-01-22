@@ -1,5 +1,5 @@
 ﻿using FoxfordHack.DataBase.DBApplication;
-using FoxfordHack.Models.Course;
+using FoxfordHack.Models.DataBaseModels;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -31,7 +31,7 @@ namespace FoxfordHack.DataBase
             }
             return false;
         }
-        public async Task<bool> SetActiveTasksForCourse (ICollection<Models.Course.TaskFoxford> tasks, int courseId)
+        public async Task<bool> SetActiveTasksForCourse (ICollection<Models.DataBaseModels.TaskFoxford> tasks, int courseId)
         {
             try
             {

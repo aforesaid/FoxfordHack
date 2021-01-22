@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace FoxfordHack.Models.Course
+namespace FoxfordHack.Models.DataBaseModels
 {
     public class Course
     {

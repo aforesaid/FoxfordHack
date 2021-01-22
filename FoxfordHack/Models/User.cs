@@ -5,6 +5,6 @@ namespace FoxfordHack.Models
     {
         public string Login { get; set; }
         public string Password { get; set; } 
-        public List<Course.Course> Courses { get; set; }
+        public List<DataBaseModels.Course> Courses { get; set; }
     }
 }
