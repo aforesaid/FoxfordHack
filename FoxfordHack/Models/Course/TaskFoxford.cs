@@ -9,5 +9,6 @@ namespace FoxfordHack.Models.Course
         public int CourseId { get; set; }
         public int TaskFoxfordId { get; set; }
         public string Answer { get; set; }
+        public int LessonId { get; set; }
     }
 }
