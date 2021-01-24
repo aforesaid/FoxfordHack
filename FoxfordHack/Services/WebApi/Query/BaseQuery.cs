@@ -1,5 +1,5 @@
-﻿using System.Net.Http;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Net.Http;
 namespace FoxfordHack.Services.WebApi.Query
 {
     abstract class BaseQuery
