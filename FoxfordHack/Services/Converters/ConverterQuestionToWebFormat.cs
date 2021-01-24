@@ -4,6 +4,7 @@ using FoxfordHack.Models.ModelParsingToJson.Answers.TextGap;
 using FoxfordHack.Models.ModelParsingToJson.Answers.Links;
 using FoxfordHack.Models.ModelParsingToJson.Answers.MatchGroup;
 using FoxfordHack.Models.ModelParsingToJson.Answers.TextSelection;
+using FoxfordHack.Models.ModelParsingToJson.Answers.TextCompose;
 using System.Linq;
 using FoxfordHack.Models.ModelParsingToJson.Question;
 using System;
@@ -26,6 +27,8 @@ namespace FoxfordHack.Services.Converters
                 "text"     =>  GetContentForText(),
                 "text_gap" =>  GetContentForTextGap(),
                 "match_group" => GetContentForMatchGroupAnswer(),
+                "text_selection" => GetContentForTextSelection(),
+                "text_compose" => GetContentForTextCompose(),
                 _ => throw new ArgumentException($"Invalid input type {question.Type}")
             };
 
@@ -93,6 +96,14 @@ namespace FoxfordHack.Services.Converters
                 result.Add(new KeyValuePair<string, string>($"questions[{QuestionId}][][position]", $"{item.Position}"));
                 result.Add(new KeyValuePair<string, string>($"questions[{QuestionId}][][selection]", $"{item.Selection}"));
             }
+            return result;
+        }
+        private List<KeyValuePair<string, string>> GetContentForTextCompose()
+        {
+            var modelList = new ConverterAnswerToModel<TextComposeAnswer>().ConvertObjectJsonToModel(ObjectContent);
+            var result = new List<KeyValuePair<string, string>>();
+            foreach (var item in modelList)
+                result.Add(new KeyValuePair<string, string>($"questions[{QuestionId}]", $"{item.Answers[0]}"));
             return result;
         }
     }
