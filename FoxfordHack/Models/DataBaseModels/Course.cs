@@ -7,6 +7,6 @@ namespace FoxfordHack.Models.DataBaseModels
         public int Id { get; set; }
         public int CourseId { get; set; }
         public string Name { get; set; }
-        public List<TaskFoxford> Tasks { get; set; } = new List<TaskFoxford>();
+        public List<Lesson> Lessons { get; set; } = new List<Lesson>();
     }
 }
