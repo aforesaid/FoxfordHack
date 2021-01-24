@@ -14,9 +14,9 @@ namespace FoxfordHack.Services.Converters
     {
         private object ObjectContent;
         private int QuestionId;
-        public Dictionary<string, string> GetContentByQuestion(BaseQuestion question)
+        public List<KeyValuePair<string, string>> GetContentByQuestion(BaseQuestion question)
         {
-            ObjectContent = question.ObjectAnswers;
+            ObjectContent = question.ObjectAnswers is null? question.ObjectAnswersByText : question.ObjectAnswers;
             QuestionId = question.Id;
             return  question.Type switch
             {
@@ -29,46 +29,45 @@ namespace FoxfordHack.Services.Converters
             };
 
         }
-        private Dictionary<string, string> GetContentForCheckbox()
+        private List<KeyValuePair<string, string>> GetContentForCheckbox()
         {
             var modelList = new ConverterAnswerToModel<CheckboxAnswer>().ConvertObjectJsonToModel(ObjectContent);
-            var result = new Dictionary<string, string>();
+            var result = new List<KeyValuePair<string, string>>();
             foreach (var item in modelList)
                 if (item.IsCorrect)
-                    result.Add($"questions[{QuestionId}][]", $"{item.Id}");
+                    result.Add(new KeyValuePair<string, string>($"questions[{QuestionId}][]", $"{item.Id}"));
             return result;
         }
-        private Dictionary<string, string> GetContentForLinks()
+        private List<KeyValuePair<string, string>> GetContentForLinks()
         {
             var modelList = new ConverterAnswerToModel<LinksAnswer>().ConvertObjectJsonToModel(ObjectContent);
-            var result = new Dictionary<string, string>();
+            var result = new List<KeyValuePair<string, string>>();
             foreach (var item in modelList)
-            result.Add($"questions[{QuestionId}][{item.Id}]", $"{item?.CorrectAnswersId?[0]}");
+            result.Add(new KeyValuePair<string, string>($"questions[{QuestionId}][{item.Id}]", $"{item?.CorrectAnswersId?[0]}"));
             return result;
         }
-        private Dictionary<string, string> GetContentForRadio()
+        private List<KeyValuePair<string, string>> GetContentForRadio()
         {
             var modelList = new ConverterAnswerToModel<RadioAnswer>().ConvertObjectJsonToModel(ObjectContent);
-            var result = new Dictionary<string, string>();
+            var result = new List<KeyValuePair<string, string>>();
             foreach (var item in modelList)
                 if (item.IsCorrect)
-                    result.Add($"questions[{QuestionId}]", $"{item.Id}");
+                    result.Add(new KeyValuePair<string, string>($"questions[{QuestionId}]", $"{item.Id}"));
             return result;
         }
-        private Dictionary<string, string> GetContentForText()
+        private List<KeyValuePair<string, string>> GetContentForText()
         {
-            var modelList = new ConverterAnswerToModel<TextAnswer>().ConvertObjectJsonToModel(ObjectContent);
-            var result = new Dictionary<string, string>();
-            foreach (var item in modelList)
-            result.Add($"questions[{QuestionId}][]", $"{item.CorrectAnswers[0]}");
+            var modelList = new ConverterAnswerToModel<string>().ConvertObjectJsonToModel(ObjectContent);
+            var result = new List<KeyValuePair<string, string>>();
+            result.Add(new KeyValuePair<string, string>($"questions[{QuestionId}][]", $"{modelList[0]}"));
             return result;
         }
-        private Dictionary<string, string> GetContentForTextGap()
+        private List<KeyValuePair<string, string>> GetContentForTextGap()
         {
             var modelList = new ConverterAnswerToModel<TextGapAnswer>().ConvertObjectJsonToModel(ObjectContent);
-            var result = new Dictionary<string, string>();
+            var result = new List<KeyValuePair<string, string>>();
             foreach (var item in modelList)
-            result.Add($"questions[{QuestionId}][{item.Id}]", $"{item.Content}");
+            result.Add(new KeyValuePair<string, string>($"questions[{QuestionId}][{item.Id}]", $"{item.Content}"));
             return result;
         }
     }
