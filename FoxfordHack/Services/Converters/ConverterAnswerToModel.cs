@@ -10,7 +10,7 @@ namespace FoxfordHack.Services.Converters
             try
             {
                 var jsonInfo = JsonSerializer.Serialize(Info);
-                var list = JsonSerializer.Deserialize<List<T>>(jsonInfo,);
+                var list = JsonSerializer.Deserialize<List<T>>(jsonInfo);
                 return list;
             }
             catch (Exception ex)
