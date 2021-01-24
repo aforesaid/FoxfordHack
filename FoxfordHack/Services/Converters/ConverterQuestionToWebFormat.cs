@@ -17,7 +17,11 @@ namespace FoxfordHack.Services.Converters
         private int QuestionId;
         public List<KeyValuePair<string, string>> GetContentByQuestion(BaseQuestion question)
         {
-            ObjectContent = question.ObjectAnswers is null? question.ObjectAnswersByText : question.ObjectAnswers;
+            ObjectContent = question.ObjectAnswers is null?
+                      question.ObjectAnswersByText is null?
+                      question.ObjectAnswersByTextSelection:
+                      question.ObjectAnswersByText: 
+                      question.ObjectAnswers;
             QuestionId = question.Id;
             return  question.Type switch
             {
