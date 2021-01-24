@@ -75,19 +75,12 @@ namespace FoxfordHack.Services.Converters
             var modelList = new ConverterAnswerToModel<MatchGroupAnswer>().ConvertObjectJsonToModel(ObjectContent);
             var result = new List<KeyValuePair<string, string>>();
             foreach (var item in modelList)
+            {
+                var value = "";
                 foreach (var answer in item.CorrectAnswer)
-                {
-                    if (result.Any(_item => _item.Key == $"questions[{QuestionId}][{item.Id}]"))
-                    {
-                        var _quest = result.FirstOrDefault(_item => _item.Key == $"questions[{QuestionId}][{item.Id}]");
-                        var key = _quest.Key;
-                        var value = _quest.Value + $",{answer}";
-                        result.Remove(_quest);
-                        result.Add(new KeyValuePair<string, string>(key, value));
-                    }
-                    else
-                        result.Add(new KeyValuePair<string, string>($"questions[{QuestionId}][{item.Id}]", $"{answer}"));
-                }
+                    value += value == "" ? $"{answer}" : $",{answer}";
+                result.Add(new KeyValuePair<string, string>($"questions[{QuestionId}][{item.Id}]", $"{value}"));
+            }
             return result;
         }
     }
