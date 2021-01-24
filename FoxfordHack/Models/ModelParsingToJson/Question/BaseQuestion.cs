@@ -14,5 +14,7 @@ namespace FoxfordHack.Models.ModelParsingToJson.Question
         public int Id { get; set; }
         [JsonPropertyName("type")]
         public string Type { get; set; }
+        [JsonPropertyName("correct_answers")]
+        public object ObjectAnswersByText { get; set; }
     }
 }
