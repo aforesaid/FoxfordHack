@@ -49,10 +49,6 @@ namespace FoxfordHack.Services.WebApi.Query
             if (listTasks is null)
                 return;
             var tasks = new Task[Math.Min(listTasks.Count, CountThreads)];
-            if (listTasks.Count>10)
-            {
-
-            }
             for (int i = 0; i < Math.Min(listTasks.Count,CountThreads); i++)
             {
                 tasks[i] = FailsAnswerFromTasks(listTasks, lessonId, i);
@@ -81,7 +77,6 @@ namespace FoxfordHack.Services.WebApi.Query
                 var jsonString = await request.Content.ReadAsStringAsync();
                 if (request.StatusCode != System.Net.HttpStatusCode.OK)
                 {
-                 //   Console.WriteLine($"{url}");
                     return false;
                 }
                 return true;

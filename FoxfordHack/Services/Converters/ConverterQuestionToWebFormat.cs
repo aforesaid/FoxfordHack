@@ -1,10 +1,11 @@
 ﻿using FoxfordHack.Models.ModelParsingToJson.Answers.CheckboxType;
+using FoxfordHack.Models.ModelParsingToJson.Answers.Radio;
+using FoxfordHack.Models.ModelParsingToJson.Answers.TextGap;
 using FoxfordHack.Models.ModelParsingToJson.Answers.Links;
 using FoxfordHack.Models.ModelParsingToJson.Answers.MatchGroup;
-using FoxfordHack.Models.ModelParsingToJson.Answers.Radio;
-using FoxfordHack.Models.ModelParsingToJson.Answers.TextCompose;
-using FoxfordHack.Models.ModelParsingToJson.Answers.TextGap;
 using FoxfordHack.Models.ModelParsingToJson.Answers.TextSelection;
+using FoxfordHack.Models.ModelParsingToJson.Answers.TextCompose;
+using System.Linq;
 using FoxfordHack.Models.ModelParsingToJson.Question;
 using System;
 using System.Collections.Generic;
@@ -102,10 +103,10 @@ namespace FoxfordHack.Services.Converters
         }
         private List<KeyValuePair<string, string>> GetContentForTextCompose()
         {
-            var modelList = new ConverterAnswerToModel<TextComposeAnswer>().ConvertObjectJsonToModel(ObjectContent);
+            var modelList = new ConverterAnswerToModel<string>().ConvertObjectJsonToModel(ObjectContent);
             var result = new List<KeyValuePair<string, string>>();
             foreach (var item in modelList)
-                result.Add(new KeyValuePair<string, string>($"questions[{QuestionId}]", $"{item.Answers[0]}"));
+                result.Add(new KeyValuePair<string, string>($"questions[{QuestionId}]", $"{item}"));
             return result;
         }
     }

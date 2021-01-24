@@ -5,8 +5,6 @@ namespace FoxfordHack.Models.ModelParsingToJson.Question
     class BaseQuestion
     {
 
-        [JsonPropertyName("critical_errors_count")]
-        public int MaxErrorCount { get; set; }
         [JsonPropertyName("Header")]
         public string Header { get; set; }
         [JsonPropertyName("id")]
@@ -17,7 +15,7 @@ namespace FoxfordHack.Models.ModelParsingToJson.Question
         public object ObjectAnswers { get; set; }
         [JsonPropertyName("correct_answers")]
         public object ObjectAnswersByText { get; set; }
-
-
+        [JsonPropertyName("given_answers")]
+        public object ObjectAnswersByTextSelection { get; set; }
     }
 }
