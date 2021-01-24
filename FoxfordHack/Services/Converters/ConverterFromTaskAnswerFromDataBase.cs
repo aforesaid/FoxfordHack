@@ -7,7 +7,7 @@ namespace FoxfordHack.Services.Converters
     public static class ConverterFromTaskAnswerFromDataBase
     {
         public static string DictionaryToString
-      (Dictionary<string, string> dictionary)
+      (List<KeyValuePair<string, string>> dictionary)
         {
             if (dictionary == null)
                 throw new ArgumentNullException("Bad Dictionary");
@@ -17,15 +17,15 @@ namespace FoxfordHack.Services.Converters
 
             return "{" + string.Join(",", items) + "}";
         }
-        public static IDictionary<string, string> StringToDictionary
+        public static List<KeyValuePair<string, string>> StringToDictionary
       (string content)
         {
             if (content == null)
                 throw new ArgumentNullException("Bad string from DB");
-            var dictionary = new Dictionary<string, string>();
+            var dictionary = new List<KeyValuePair<string, string>>();
             var contents = content.Split(new char[] { '=', '}', '{', ',' });
             for (int i = 1; i+1 < contents.Length; i+=2)
-                dictionary.Add(contents[i], contents[i + 1]);
+                dictionary.Add(new KeyValuePair<string,string>(contents[i], contents[i + 1]));
             return dictionary;
         }
     }
