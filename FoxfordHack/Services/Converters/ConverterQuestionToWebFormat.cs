@@ -63,7 +63,10 @@ namespace FoxfordHack.Services.Converters
         {
             var modelList = new ConverterAnswerToModel<string>().ConvertObjectJsonToModel(ObjectContent);
             var result = new List<KeyValuePair<string, string>>();
-            result.Add(new KeyValuePair<string, string>($"questions[{QuestionId}][]", $"{modelList[0]}"));
+            foreach (var item in modelList)
+            {
+                result.Add(new KeyValuePair<string, string>($"questions[{QuestionId}][]", $"{item}"));
+            }
             return result;
         }
         private List<KeyValuePair<string, string>> GetContentForTextGap()
