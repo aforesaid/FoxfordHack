@@ -3,6 +3,7 @@ using FoxfordHack.Models.ModelParsingToJson.Answers.Radio;
 using FoxfordHack.Models.ModelParsingToJson.Answers.TextGap;
 using FoxfordHack.Models.ModelParsingToJson.Answers.Links;
 using FoxfordHack.Models.ModelParsingToJson.Answers.MatchGroup;
+using FoxfordHack.Models.ModelParsingToJson.Answers.TextSelection;
 using System.Linq;
 using FoxfordHack.Models.ModelParsingToJson.Question;
 using System;
@@ -80,6 +81,17 @@ namespace FoxfordHack.Services.Converters
                 foreach (var answer in item.CorrectAnswer)
                     value += value == "" ? $"{answer}" : $",{answer}";
                 result.Add(new KeyValuePair<string, string>($"questions[{QuestionId}][{item.Id}]", $"{value}"));
+            }
+            return result;
+        }
+        private List<KeyValuePair<string, string>> GetContentForTextSelection()
+        {
+            var modelList = new ConverterAnswerToModel<TextSelectionAnswer>().ConvertObjectJsonToModel(ObjectContent);
+            var result = new List<KeyValuePair<string, string>>();
+            foreach (var item in modelList)
+            {
+                result.Add(new KeyValuePair<string, string>($"questions[{QuestionId}][][position]", $"{item.Position}"));
+                result.Add(new KeyValuePair<string, string>($"questions[{QuestionId}][][selection]", $"{item.Selection}"));
             }
             return result;
         }
