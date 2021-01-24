@@ -1,10 +1,9 @@
-﻿using FoxfordHack.Models.ModelParsingToJson.Answers;
-using FoxfordHack.Models.ModelParsingToJson.Answers.CheckboxType;
+﻿using FoxfordHack.Models.ModelParsingToJson.Answers.CheckboxType;
 using FoxfordHack.Models.ModelParsingToJson.Answers.Radio;
 using FoxfordHack.Models.ModelParsingToJson.Answers.TextGap;
 using FoxfordHack.Models.ModelParsingToJson.Answers.Links;
-using FoxfordHack.Models.ModelParsingToJson.Answers.Text;
-
+using FoxfordHack.Models.ModelParsingToJson.Answers.MatchGroup;
+using System.Linq;
 using FoxfordHack.Models.ModelParsingToJson.Question;
 using System;
 using System.Collections.Generic;
@@ -25,6 +24,7 @@ namespace FoxfordHack.Services.Converters
                 "radio"    =>  GetContentForRadio(),
                 "text"     =>  GetContentForText(),
                 "text_gap" =>  GetContentForTextGap(),
+                "match_group" => GetContentForMatchGroupAnswer(),
                 _ => throw new ArgumentException($"Invalid input type {question.Type}")
             };
 
@@ -68,6 +68,26 @@ namespace FoxfordHack.Services.Converters
             var result = new List<KeyValuePair<string, string>>();
             foreach (var item in modelList)
             result.Add(new KeyValuePair<string, string>($"questions[{QuestionId}][{item.Id}]", $"{item.Content}"));
+            return result;
+        }
+        private List<KeyValuePair<string, string>> GetContentForMatchGroupAnswer()
+        {
+            var modelList = new ConverterAnswerToModel<MatchGroupAnswer>().ConvertObjectJsonToModel(ObjectContent);
+            var result = new List<KeyValuePair<string, string>>();
+            foreach (var item in modelList)
+                foreach (var answer in item.CorrectAnswer)
+                {
+                    if (result.Any(_item => _item.Key == $"questions[{QuestionId}][{item.Id}]"))
+                    {
+                        var _quest = result.FirstOrDefault(_item => _item.Key == $"questions[{QuestionId}][{item.Id}]");
+                        var key = _quest.Key;
+                        var value = _quest.Value + $",{answer}";
+                        result.Remove(_quest);
+                        result.Add(new KeyValuePair<string, string>(key, value));
+                    }
+                    else
+                        result.Add(new KeyValuePair<string, string>($"questions[{QuestionId}][{item.Id}]", $"{answer}"));
+                }
             return result;
         }
     }
