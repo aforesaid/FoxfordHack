@@ -30,11 +30,11 @@ namespace FoxfordHack.Services.WebApi.Query
             var result = JsonSerializer.Deserialize<List<TaskFoxford>>(jsonString);
             return result;
         }
-        public async Task<ViewQuestionPage> GetAnswerFromTask(TaskFoxford task, int lessonId)
+        public async Task<ViewQuestionPage> GetAnswerFromTask(Models.DataBaseModels.TaskFoxford task, int lessonId)
         {
             if (task is null)
                 return null;
-            var url = $"{DefaultURL}/api/lessons/{lessonId}/tasks/{task.Id}";
+            var url = $"{DefaultURL}/api/lessons/{lessonId}/tasks/{task.TaskFoxfordId}";
             using var client = new HttpClient();
             client.DefaultRequestHeaders.Add("Cookie", Cookie);
             client.DefaultRequestHeaders.Add("User-Agent", DefaultUserAgent);
@@ -44,7 +44,7 @@ namespace FoxfordHack.Services.WebApi.Query
             var result = JsonSerializer.Deserialize<ViewQuestionPage>(jsonString);
             return result;
         }
-        public void FailsAnswerFromTaskByLesson(List<TaskFoxford> listTasks, int lessonId)
+        public void FailsAnswerFromTaskByLesson(List<Models.DataBaseModels.TaskFoxford> listTasks, int lessonId)
         {
             if (listTasks is null)
                 return;
@@ -83,46 +83,32 @@ namespace FoxfordHack.Services.WebApi.Query
             }
 
         }
-        private async Task FailsAnswerFromTasks(List<TaskFoxford> tasks, int lessonId,int startIndex)
+        private async Task FailsAnswerFromTasks(List<Models.DataBaseModels.TaskFoxford> tasks, int lessonId,int startIndex)
         {
             for (int i = startIndex; i < tasks.Count; i+= CountThreads)
             {
-                await FailsAnswerFromTask(tasks[i], lessonId, tasks.Count, true) ;
+                await FailsAnswerFromTask(tasks[i], lessonId, tasks.Count) ;
             }
         }
-        public async Task<bool> FailsAnswerFromTask(TaskFoxford task,int lessonId,int countTasks,bool flag)
+        public async Task<bool> FailsAnswerFromTask(Models.DataBaseModels.TaskFoxford task,int lessonId,int countTasks)
         {
-            if (task.Status is "fail")
-                return false;
-            var url = $"{DefaultURL}/api/lessons/{lessonId}/tasks/{task.Id}/fails";
-            var urlPage = $"{DefaultURL}/api/lessons/{lessonId}/tasks/{task.Id}";
+            var url = $"{DefaultURL}/api/lessons/{lessonId}/tasks/{task.TaskFoxfordId}/fails";
+            var urlPage = $"{DefaultURL}/api/lessons/{lessonId}/tasks/{task.TaskFoxfordId}";
             using var client = new HttpClient();
             client.DefaultRequestHeaders.Add("Cookie", Cookie);
             client.DefaultRequestHeaders.Add("User-Agent", DefaultUserAgent);
             client.DefaultRequestHeaders.Add("X-CSRF-Token", XCSRFToken);
             client.DefaultRequestHeaders.Host = "foxford.ru";
             client.DefaultRequestHeaders.Add("X-Requested-With", "XMLHttpRequest");
-            client.DefaultRequestHeaders.Referrer = new Uri($"{DefaultURL}/api/lessons/{lessonId}/tasks/{task.Id}");
+            client.DefaultRequestHeaders.Referrer = new Uri($"{DefaultURL}/api/lessons/{lessonId}/tasks/{task.TaskFoxfordId}");
             var request = await client.GetAsync(urlPage);
             var jsonString = await request.Content.ReadAsStringAsync();
             if (jsonString == @"{""errors"":""Доступ запрещён""}")
                 return true;
             request = await client.PostAsync(url, null);
-            if (request.StatusCode == System.Net.HttpStatusCode.UnprocessableEntity)
-            {
-                Console.WriteLine(urlPage);
-                return true;
-            }
-            if (request.StatusCode != System.Net.HttpStatusCode.OK)
-            {
-                await Task.Delay(2 * Delay);
-                await FailsAnswerFromTask(task, lessonId, countTasks, false);
-            }
-            if (!flag) return true;
-            task.Status = "fail";
             courseActivate++;
             Console.WriteLine($"Completed {courseActivate}/{countTasks}");
-            await Task.Delay(2*Delay);
+            await Task.Delay(Delay);
             return true;
         }
         public async Task<bool> SetAnswerForTask(int lessonId, int taskId,Dictionary<string,string> answer)

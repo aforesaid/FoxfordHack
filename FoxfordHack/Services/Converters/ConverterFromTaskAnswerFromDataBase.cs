@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 using System.Linq;
 namespace FoxfordHack.Services.Converters
 {
@@ -14,7 +15,7 @@ namespace FoxfordHack.Services.Converters
             var items = from kvp in dictionary
                         select kvp.Key + "=" + kvp.Value;
 
-            return "{" + string.Join(",", items) + "}";
+            return  string.Join(",", items) ;
         }
         public static List<KeyValuePair<string, string>> StringToDictionary
       (string content)

@@ -13,15 +13,11 @@ namespace FoxfordHack.Services.Converters
 {
     class ConverterQuestionToWebFormat
     {
-        private object ObjectContent;
+        private BaseQuestion Question;
         private int QuestionId;
         public List<KeyValuePair<string, string>> GetContentByQuestion(BaseQuestion question)
         {
-            ObjectContent = question.ObjectAnswers is null?
-                      question.ObjectAnswersByText is null?
-                      question.ObjectAnswersByTextSelection:
-                      question.ObjectAnswersByText: 
-                      question.ObjectAnswers;
+            Question = question;
             QuestionId = question.Id;
             return  question.Type switch
             {
@@ -33,13 +29,14 @@ namespace FoxfordHack.Services.Converters
                 "match_group" => GetContentForMatchGroupAnswer(),
                 "text_selection" => GetContentForTextSelection(),
                 "text_compose" => GetContentForTextCompose(),
+                "file" =>  new List<KeyValuePair<string, string>>(),
                 _ => throw new ArgumentException($"Invalid input type {question.Type}")
             };
 
         }
         private List<KeyValuePair<string, string>> GetContentForCheckbox()
         {
-            var modelList = new ConverterAnswerToModel<CheckboxAnswer>().ConvertObjectJsonToModel(ObjectContent);
+            var modelList = new ConverterAnswerToModel<CheckboxAnswer>().ConvertObjectJsonToModel(Question.ObjectAnswers);
             var result = new List<KeyValuePair<string, string>>();
             foreach (var item in modelList)
                 if (item.IsCorrect)
@@ -48,7 +45,7 @@ namespace FoxfordHack.Services.Converters
         }
         private List<KeyValuePair<string, string>> GetContentForLinks()
         {
-            var modelList = new ConverterAnswerToModel<LinksAnswer>().ConvertObjectJsonToModel(ObjectContent);
+            var modelList = new ConverterAnswerToModel<LinksAnswer>().ConvertObjectJsonToModel(Question.ObjectAnswers);
             var result = new List<KeyValuePair<string, string>>();
             foreach (var item in modelList)
             result.Add(new KeyValuePair<string, string>($"questions[{QuestionId}][{item.Id}]", $"{item?.CorrectAnswersId?[0]}"));
@@ -56,7 +53,7 @@ namespace FoxfordHack.Services.Converters
         }
         private List<KeyValuePair<string, string>> GetContentForRadio()
         {
-            var modelList = new ConverterAnswerToModel<RadioAnswer>().ConvertObjectJsonToModel(ObjectContent);
+            var modelList = new ConverterAnswerToModel<RadioAnswer>().ConvertObjectJsonToModel(Question.ObjectAnswers);
             var result = new List<KeyValuePair<string, string>>();
             foreach (var item in modelList)
                 if (item.IsCorrect)
@@ -65,8 +62,10 @@ namespace FoxfordHack.Services.Converters
         }
         private List<KeyValuePair<string, string>> GetContentForText()
         {
-            var modelList = new ConverterAnswerToModel<string>().ConvertObjectJsonToModel(ObjectContent);
+            var modelList = new ConverterAnswerToModel<string>().ConvertObjectJsonToModel(Question.ObjectAnswersByText);
             var result = new List<KeyValuePair<string, string>>();
+            if (modelList is null)
+                return result;
             foreach (var item in modelList)
             {
                 result.Add(new KeyValuePair<string, string>($"questions[{QuestionId}][]", $"{item}"));
@@ -75,16 +74,20 @@ namespace FoxfordHack.Services.Converters
         }
         private List<KeyValuePair<string, string>> GetContentForTextGap()
         {
-            var modelList = new ConverterAnswerToModel<TextGapAnswer>().ConvertObjectJsonToModel(ObjectContent);
+            var modelList = new ConverterAnswerToModel<TextGapAnswer>().ConvertObjectJsonToModel(Question.ObjectAnswers);
             var result = new List<KeyValuePair<string, string>>();
+            if (modelList is null)
+                return result;
             foreach (var item in modelList)
             result.Add(new KeyValuePair<string, string>($"questions[{QuestionId}][{item.Id}]", $"{item.Content}"));
             return result;
         }
         private List<KeyValuePair<string, string>> GetContentForMatchGroupAnswer()
         {
-            var modelList = new ConverterAnswerToModel<MatchGroupAnswer>().ConvertObjectJsonToModel(ObjectContent);
+            var modelList = new ConverterAnswerToModel<MatchGroupAnswer>().ConvertObjectJsonToModel(Question.ObjectAnswersByMatchGroup);
             var result = new List<KeyValuePair<string, string>>();
+            if (modelList is null)
+                return result;
             foreach (var item in modelList)
             {
                 var value = "";
@@ -96,8 +99,10 @@ namespace FoxfordHack.Services.Converters
         }
         private List<KeyValuePair<string, string>> GetContentForTextSelection()
         {
-            var modelList = new ConverterAnswerToModel<TextSelectionAnswer>().ConvertObjectJsonToModel(ObjectContent);
+            var modelList = new ConverterAnswerToModel<TextSelectionAnswer>().ConvertObjectJsonToModel(Question.ObjectAnswersByTextSelection);
             var result = new List<KeyValuePair<string, string>>();
+            if (modelList is null)
+                return result;
             foreach (var item in modelList)
             {
                 result.Add(new KeyValuePair<string, string>($"questions[{QuestionId}][][position]", $"{item.Position}"));
@@ -107,8 +112,10 @@ namespace FoxfordHack.Services.Converters
         }
         private List<KeyValuePair<string, string>> GetContentForTextCompose()
         {
-            var modelList = new ConverterAnswerToModel<string>().ConvertObjectJsonToModel(ObjectContent);
+            var modelList = new ConverterAnswerToModel<string>().ConvertObjectJsonToModel(Question.ObjectAnswersByText);
             var result = new List<KeyValuePair<string, string>>();
+            if (modelList is null)
+                return result;
             foreach (var item in modelList)
                 result.Add(new KeyValuePair<string, string>($"questions[{QuestionId}]", $"{item}"));
             return result;

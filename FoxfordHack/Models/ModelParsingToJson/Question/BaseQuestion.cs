@@ -17,5 +17,7 @@ namespace FoxfordHack.Models.ModelParsingToJson.Question
         public object ObjectAnswersByText { get; set; }
         [JsonPropertyName("given_answers")]
         public object ObjectAnswersByTextSelection { get; set; }
+        [JsonPropertyName("groups")]
+        public object ObjectAnswersByMatchGroup { get; set; }
     }
 }
