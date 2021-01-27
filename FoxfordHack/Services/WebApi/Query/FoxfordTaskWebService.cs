@@ -55,7 +55,7 @@ namespace FoxfordHack.Services.WebApi.Query
             }
             Task.WaitAll(tasks);
         }
-        public async Task<bool> SetAnswerFromTask(Models.DataBaseModels.TaskFoxford task, int lessonId)
+        public async Task<bool> SetAnswerForTask(Models.DataBaseModels.TaskFoxford task, int lessonId)
         {
             var answer = ConverterFromTaskAnswerFromDataBase.StringToDictionary(task.Answer);
             var content = new MultipartFormDataContent("------WebKitFormBoundarycRCuRGn6YA4bC3LZ");
@@ -109,21 +109,6 @@ namespace FoxfordHack.Services.WebApi.Query
             courseActivate++;
             Console.WriteLine($"Completed {courseActivate}/{countTasks}");
             await Task.Delay(Delay);
-            return true;
-        }
-        public async Task<bool> SetAnswerForTask(int lessonId, int taskId,Dictionary<string,string> answer)
-        {
-            var url = $"{DefaultURLForTasks}{lessonId}/tasks/{taskId}/answer_attempts";
-            using var client = new HttpClient();
-            client.DefaultRequestHeaders.Add("Cookie", Cookie);
-            client.DefaultRequestHeaders.Add("User-Agent", DefaultUserAgent);
-            client.DefaultRequestHeaders.Add("XCSRFToken", XCSRFToken);
-            var content = new FormUrlEncodedContent(answer);
-            var request = await client.PostAsync(url, content);
-            if (request.StatusCode != System.Net.HttpStatusCode.OK)
-            {
-                return false;
-            }
             return true;
         }
     }
